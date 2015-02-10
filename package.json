@@ -24,5 +24,8 @@
   "devDependencies": {
     "mocha": "^2.1.0",
     "should": "^4.6.5"
+  },
+  "dependencies": {
+    "underscore": "^1.7.0"
   }
 }

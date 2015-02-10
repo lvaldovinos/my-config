@@ -7,8 +7,31 @@ describe('myconfig test case' , function() {
 	describe('#init no callback provided' , function() {
 		beforeEach('Create config.json file under __dirname' , function(done) {
 			var cf = {
+				defaults : {
+					'account-types' : ['employee' , 'admin' , 'cooker'],
+					database : 'example'
+				},
 				dev : {
-					database : 'example dev'
+					database : {
+						name : 'example dev',
+						example : 'example',
+						password : '$Path'
+					},
+					client : {
+						name : 'example.com'
+					},
+					dbshards : [
+						{
+							host : 'example.dbshard.1.com',
+							name : 'idk',
+							pass : '123'
+						},
+						{
+							host : 'example.dbshard.2.com',
+							name : 'idk',
+							pass : '$Path'
+						}
+					]
 				},
 				test : {
 					database : 'example qa'
@@ -20,7 +43,6 @@ describe('myconfig test case' , function() {
 			fs.writeFile(cfp , JSON.stringify(cf) , function(err) {
 				if (err) return done(err);
 				console.log('Config file saved!');
-				process.env.NODE_ENV = 'development';
 				done();
 			});
 		});
@@ -37,7 +59,12 @@ describe('myconfig test case' , function() {
 		beforeEach('Create config.json file under __dirname' , function(done) {
 			var cf = {
 				dev : {
-					database : 'example dev'
+					database : {
+						name : 'example dev',
+						password : {
+							'mc-env' : 'path'
+						}
+					}
 				},
 				test : {
 					database : 'example qa'
@@ -49,7 +76,6 @@ describe('myconfig test case' , function() {
 			fs.writeFile(cfp , JSON.stringify(cf) , function(err) {
 				if (err) return done(err);
 				console.log('Config file saved!');
-				process.env.NODE_ENV = 'development';
 				done();
 			});
 		});
