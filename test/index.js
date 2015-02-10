@@ -4,89 +4,77 @@ var should = require('should'),
 	myconfig = require('./../index');
 	
 describe('myconfig test case' , function() {
-	describe('#init no callback provided' , function() {
-		beforeEach('Create config.json file under __dirname' , function(done) {
-			var cf = {
-				defaults : {
-					'account-types' : ['employee' , 'admin' , 'cooker'],
-					database : 'example'
+	beforeEach('Create config.json file under __dirname' , function(done) {
+		var cf = {
+			defaults : {
+				'account-types' : ['employee' , 'admin' , 'cooker'],
+				database : 'example'
+			},
+			dev : {
+				database : {
+					name : 'example dev',
+					example : 'example',
+					password : '$Path'
 				},
-				dev : {
-					database : {
-						name : 'example dev',
-						example : 'example',
-						password : '$Path'
+				client : {
+					name : 'example.com'
+				},
+				dbshards : [
+					{
+						host : 'example.dbshard.1.com',
+						name : 'idk',
+						pass : '123'
 					},
-					client : {
-						name : 'example.com'
-					},
-					dbshards : [
-						{
-							host : 'example.dbshard.1.com',
-							name : 'idk',
-							pass : '123'
-						},
-						{
-							host : 'example.dbshard.2.com',
-							name : 'idk',
-							pass : '$Path'
-						}
-					]
-				},
-				test : {
-					database : 'example qa'
-				},
-				production : {
-					database : 'example prod'
-				}
-			};
-			fs.writeFile(cfp , JSON.stringify(cf) , function(err) {
-				if (err) return done(err);
-				console.log('Config file saved!');
-				done();
-			});
+					{
+						host : 'example.dbshard.2.com',
+						name : 'idk',
+						pass : '$Path'
+					}
+				]
+			},
+			test : {
+				database : 'example qa'
+			},
+			production : {
+				database : 'example prod'
+			}
+		};
+		fs.writeFile(cfp , JSON.stringify(cf) , function(err) {
+			if (err) return done(err);
+			console.log('Config file saved!');
+			done();
 		});
+	});
+	describe('#init no callback provided' , function() {
 		it('Should return the development config object' , function() {
 			var mc = myconfig.init(cfp);
 			mc.should.be.an.Object;
 			mc.should.not.be.empty;
-			mc.should.be.an.Object;
-			mc.should.have.property('database');
-			mc.database.should.be.exactly('example dev');
+			mc.should.have.properties('account-types' , 'database' , 'client' , 'dbshards');
+			mc.database.should.be.an.Object;
+			mc.database.should.have.properties('name' , 'example' , 'password');
+			mc.database.password.should.not.be.exactly('$Path');
+			mc.client.should.be.an.Object;
+			mc.dbshards.should.be.an.Array;
+			mc.dbshards.should.have.length(2);
+			mc.dbshards[1].pass.should.startWith('C');
 		});
 	});
 	describe('#init callback provided' , function() { 
-		beforeEach('Create config.json file under __dirname' , function(done) {
-			var cf = {
-				dev : {
-					database : {
-						name : 'example dev',
-						password : {
-							'mc-env' : 'path'
-						}
-					}
-				},
-				test : {
-					database : 'example qa'
-				},
-				production : {
-					database : 'example prod'
-				}
-			};
-			fs.writeFile(cfp , JSON.stringify(cf) , function(err) {
-				if (err) return done(err);
-				console.log('Config file saved!');
-				done();
-			});
-		});
 		it('Should return the development config object' , function(done) {
-			var mc = myconfig.init(cfp , function(err , envConfig) {
+			var mc = myconfig.init(cfp , function(err , mc) {
 				if (err) return done(err);
 				should(err).not.be.ok;
-				envConfig.should.not.be.empty;
-				envConfig.should.be.an.Object;
-				envConfig.should.have.property('database');
-				envConfig.database.should.be.exactly('example dev');
+				mc.should.be.an.Object;
+				mc.should.not.be.empty;
+				mc.should.have.properties('account-types' , 'database' , 'client' , 'dbshards');
+				mc.database.should.be.an.Object;
+				mc.database.should.have.properties('name' , 'example' , 'password');
+				mc.database.password.should.not.be.exactly('$Path');
+				mc.client.should.be.an.Object;
+				mc.dbshards.should.be.an.Array;
+				mc.dbshards.should.have.length(2);
+				mc.dbshards[1].pass.should.startWith('C');
 				done();
 			});
 		});

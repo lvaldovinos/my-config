@@ -1,1 +1,1 @@
-{"dev":{"database":{"name":"example dev","password":{"mc-env":"path"}}},"test":{"database":"example qa"},"production":{"database":"example prod"}}
+{"defaults":{"account-types":["employee","admin","cooker"],"database":"example"},"dev":{"database":{"name":"example dev","example":"example","password":"$Path"},"client":{"name":"example.com"},"dbshards":[{"host":"example.dbshard.1.com","name":"idk","pass":"123"},{"host":"example.dbshard.2.com","name":"idk","pass":"$Path"}]},"test":{"database":"example qa"},"production":{"database":"example prod"}}
