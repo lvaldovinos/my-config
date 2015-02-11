@@ -1,6 +1,7 @@
 var should = require('should'),
 	fs = require('fs'),
-	cfp = __dirname + '/config.json',
+	path = require('path'),
+	cfp = path.resolve(__dirname , './config.json'),
 	myconfig = require('./../index');
 	
 describe('myconfig test case' , function() {
@@ -41,7 +42,6 @@ describe('myconfig test case' , function() {
 		};
 		fs.writeFile(cfp , JSON.stringify(cf) , function(err) {
 			if (err) return done(err);
-			console.log('Config file saved!');
 			done();
 		});
 	});

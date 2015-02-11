@@ -1,10 +1,12 @@
+'use strict';
+
 var fs = require('fs'),
 	_ = require('underscore'),
 	env = process.env.NODE_ENV || 'dev',
 	path = require('path'),
 	myconfig = {},
 	_defaults = 'defaults',
-	_validFormats = ['json'];	
+	_validFormat = 'json';	
 
 	
 var _JSONparser = function _JSONparser(obj) {
@@ -23,30 +25,38 @@ var _JSONparser = function _JSONparser(obj) {
 	return obj;
 };
 
-
+var _JSONConverter = function _JSONConverter(utf8data) {
+	var tmpFile,
+		finalConfig;
+	try {
+		tmpFile = JSON.parse(utf8data);
+		//get dfaults...
+		finalConfig = tmpFile[_JSONparser(_defaults)] || {};
+		//got the json, need to check for properties' value that start with $, and extend finalConfig
+		return _.extend(finalConfig , _JSONparser(tmpFile[env]));
+	}
+	catch (e) {
+		throw { name : 'invalid json',
+				message : e };
+	}
+};
 	
 myconfig.init = function init(configPath , cb) {
 	var ext = path.extname(configPath).slice(1 , configPath.length),
-		tmpFile,
-		utf8data,
-		finalConfig;
+		utf8data;
 	if (typeof configPath !== 'string') throw { name : 'illegal argument',
 												message : 'configPath argument must be string' };
-	if (_validFormats.indexOf(ext) < 0) throw { name : 'illegal format',
-												message : 'valid config files : ' + _validFormats.join(', ') };
+	if (_validFormat !== ext) throw { name : 'illegal format',
+									  message : 'valid config file : ' + _validFormat };
 	if (!cb) {
 		//callback was not provided
 		//ok read file sync..
-		utf8data = fs.readFileSync(configPath , { encoding : 'utf8' });
 		try {
-			tmpFile = JSON.parse(utf8data);
-			//get dfaults...
-			finalConfig = tmpFile[_defaults];
-			//I got the json, need to check for properties' value that start with $, and extend finalConfig
-			return _.extend(finalConfig , _JSONparser(tmpFile[env]));
+			utf8data = fs.readFileSync(configPath , { encoding : 'utf8' });
+			return _JSONConverter(utf8data);
 		}
 		catch (e) {
-			throw { name : 'invalid json',
+			throw { name : 'file error',
 					message : e };
 		}
 	}
@@ -57,17 +67,11 @@ myconfig.init = function init(configPath , cb) {
 		//ok, read file async...
 		fs.readFile(configPath , { encoding : 'utf8' } , function(err , data) {
 			if (err) return cb(err);
-			utf8data = data;
 			try {
-				tmpFile = JSON.parse(utf8data);
-				//get dfaults...
-				finalConfig = tmpFile[_defaults];
-				//I got the json, need to check for properties' value that start with $, and extend finalConfig
-				return cb(null , _.extend(finalConfig , _JSONparser(tmpFile[env])));
+				return cb(null , _JSONConverter(data));
 			}
 			catch (e) {
-				throw { name : 'invalid json',
-						message : e };
+				return cb(e);
 			}
 		});
 	}
