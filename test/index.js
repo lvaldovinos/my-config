@@ -57,11 +57,27 @@ describe('myconfig test case' , function() {
 			mc.client.should.be.an.Object;
 			mc.dbshards.should.be.an.Array;
 			mc.dbshards.should.have.length(2);
-			mc.dbshards[1].pass.should.startWith('C');
+			mc.dbshards[1].pass.should.not.startWith('$');
 		});
+    it('Should return the development config object specifying environment variable' , function() {
+			var mc = myconfig.init({
+        path : cfp,
+        env : 'dev' });
+			mc.should.be.an.Object;
+			mc.should.not.be.empty;
+			mc.should.have.properties('account-types' , 'database' , 'client' , 'dbshards');
+			mc.database.should.be.an.Object;
+			mc.database.should.have.properties('name' , 'example' , 'password');
+			mc.database.password.should.not.be.exactly('$Path');
+			mc.client.should.be.an.Object;
+			mc.dbshards.should.be.an.Array;
+			mc.dbshards.should.have.length(2);
+			mc.dbshards[1].pass.should.not.startWith('$');
+		});
+
 	});
 	describe('#init callback provided' , function() { 
-		it('Should return the development config object' , function(done) {
+		it('Should return the development config object specifying callback' , function(done) {
 			var mc = myconfig.init(cfp , function(err , mc) {
 				if (err) return done(err);
 				should(err).not.be.ok;
@@ -74,9 +90,29 @@ describe('myconfig test case' , function() {
 				mc.client.should.be.an.Object;
 				mc.dbshards.should.be.an.Array;
 				mc.dbshards.should.have.length(2);
-				mc.dbshards[1].pass.should.startWith('C');
+				mc.dbshards[1].pass.should.not.startWith('$');
 				done();
 			});
 		});
+    it('Should return the development config object specifying env variable and callback' , function(done) {
+			var mc = myconfig.init({
+        path : cfp,
+        env : 'dev' }, function(err , mc) {
+				if (err) return done(err);
+				should(err).not.be.ok;
+				mc.should.be.an.Object;
+				mc.should.not.be.empty;
+				mc.should.have.properties('account-types' , 'database' , 'client' , 'dbshards');
+				mc.database.should.be.an.Object;
+				mc.database.should.have.properties('name' , 'example' , 'password');
+				mc.database.password.should.not.be.exactly('$Path');
+				mc.client.should.be.an.Object;
+				mc.dbshards.should.be.an.Array;
+				mc.dbshards.should.have.length(2);
+				mc.dbshards[1].pass.should.not.startWith('$');
+				done();
+			});
+		});
+
 	});
 })

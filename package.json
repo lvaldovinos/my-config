@@ -26,6 +26,7 @@
     "should": "^4.6.5"
   },
   "dependencies": {
+    "JSONStream": "^0.10.0",
     "underscore": "^1.7.0"
   }
 }
