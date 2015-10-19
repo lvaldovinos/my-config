@@ -1,3 +1,6 @@
+# ingnore config.json used in test
+test/config.json
+
 # Logs
 logs
 *.log

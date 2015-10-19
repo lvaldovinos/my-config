@@ -1,14 +1,14 @@
 {
   "name": "my-config",
-  "version": "1.0.2",
-  "description": "my configuration module",
+  "version": "2.0.0",
+  "description": "Node module to handle configuration files for all the different environments (dev, qa, val, prod) a project/application could have",
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lvaldovinos/my-config.git"
+    "url": "git@github.com:lvaldovinos/my-config.git"
   },
   "keywords": [
     "node",
@@ -16,11 +16,6 @@
     "javascript"
   ],
   "author": "Luis Valdovinos",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/lvaldovinos/my-config/issues"
-  },
-  "homepage": "https://github.com/lvaldovinos/my-config",
   "devDependencies": {
     "mocha": "^2.1.0",
     "should": "^4.6.5"
@@ -28,5 +23,6 @@
   "dependencies": {
     "JSONStream": "^0.10.0",
     "underscore": "^1.7.0"
-  }
+  },
+  "license": "MIT"
 }
